@@ -1,6 +1,10 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QModelIndex>
+
+class QFileSystemModel;
+class QSortFilterProxyModel;
 
 namespace Ui
 {
@@ -18,7 +22,12 @@ public:
 private slots:
     void                      on_actionClose_triggered();
     void                      on_actionEditTag_triggered();
+    void                      on_fileTree_clicked(QModelIndex index);
 
 private:
     Ui::Taggressive           *m_ui;
+    QFileSystemModel          *m_fsModel;
+    QSortFilterProxyModel     *m_fsProxyModel;
+
+    void                      initializeFileTree();
 };
