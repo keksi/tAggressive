@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QMainWindow>
-#include <QModelIndex>
+#include <QtGui/QMainWindow>
+#include <QtCore/QModelIndex>
 
 class QFileSystemModel;
 class QSortFilterProxyModel;
@@ -29,5 +29,7 @@ private:
     QFileSystemModel          *m_fsModel;
     QSortFilterProxyModel     *m_fsProxyModel;
 
+    void                      fillFileTable(const QString &dirpath);
     void                      initializeFileTree();
+    void                      initializeFileTable();
 };

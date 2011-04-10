@@ -1,8 +1,9 @@
 // Qt/
-#include <QDebug>
-#include <QModelIndex>
-#include <QFileSystemModel>
-#include <QSortFilterProxyModel>
+#include <QtCore/QDir>
+#include <QtCore/QDebug>
+#include <QtGui/QTableWidget>
+#include <QtGui/QFileSystemModel>
+#include <QtGui/QSortFilterProxyModel>
 // taggressive/
 #include "taggressive.h"
 #include "ui_taggressive.h"
@@ -17,6 +18,7 @@ Taggressive::Taggressive(QWidget *parent)
 
     // initialize
     initializeFileTree();
+    initializeFileTable();
 }
 
 Taggressive::~Taggressive()
@@ -32,8 +34,7 @@ void Taggressive::on_actionClose_triggered()
 
 void Taggressive::on_actionEditTag_triggered()
 {
-    // edit tag
-    exit(0);
+    // TODO: display edit tags dialog in here
 }
 
 void Taggressive::initializeFileTree()
@@ -59,8 +60,36 @@ void Taggressive::initializeFileTree()
     m_ui->fileTree->setHeaderHidden(true);
 }
 
+void Taggressive::initializeFileTable()
+{
+    m_ui->fileTable->setAlternatingRowColors(true);
+    m_ui->fileTable->sortItems(0);
+    m_ui->fileTable->setColumnCount(4);
+    m_ui->fileTable->setHorizontalHeaderLabels(
+        QStringList() << "filename" << "artist" << "tracktitle" << "tracknumber");
+}
+
+void Taggressive::fillFileTable(const QString &dirpath)
+{
+    QDir albumDir(dirpath);
+    QFileInfoList tracklist = albumDir.entryInfoList(QStringList() << "*.mp3");
+    m_ui->fileTable->setRowCount(tracklist.size());
+
+    for (int i=0; i < tracklist.size(); ++i)
+    {
+        QFileInfo fileInfo = tracklist.at(i);
+        QTableWidgetItem *filename = new QTableWidgetItem(fileInfo.fileName());
+        m_ui->fileTable->setItem(i, 0, filename);
+        m_ui->fileTable->setItem(i, 1, new QTableWidgetItem("-"));
+        m_ui->fileTable->setItem(i, 2, new QTableWidgetItem("-"));
+        m_ui->fileTable->setItem(i, 3, new QTableWidgetItem("-"));
+    }
+}
+
 void Taggressive::on_fileTree_clicked(QModelIndex index)
 {
-    qDebug("Taggressive::on_fileTree_clicked() : selected '%s'",
-        qPrintable(index.data().toString()));
+    QString path = m_fsModel->filePath(m_fsProxyModel->mapToSource(index));
+    fillFileTable(path);
+    qDebug("Taggressive::on_fileTree_clicked() : displaying contents of '%s'",
+        qPrintable(path));
 }
