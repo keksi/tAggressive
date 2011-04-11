@@ -11,6 +11,8 @@ namespace Ui
     class Taggressive;
 }
 
+//using namespace TagLib;
+
 class Taggressive : public QMainWindow
 {
 Q_OBJECT

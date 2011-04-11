@@ -7,6 +7,10 @@
 // taggressive/
 #include "taggressive.h"
 #include "ui_taggressive.h"
+// taglib
+#include "taglib.h"
+#include "tag.h"
+#include "fileref.h"
 
 Taggressive::Taggressive(QWidget *parent)
     : QMainWindow(parent)
@@ -78,11 +82,16 @@ void Taggressive::fillFileTable(const QString &dirpath)
     for (int i=0; i < tracklist.size(); ++i)
     {
         QFileInfo fileInfo = tracklist.at(i);
+        TagLib::FileRef fileRef(qPrintable(fileInfo.filePath()));
+        QString artist(fileRef.tag()->artist().toCString());
+        QString title(fileRef.tag()->title().toCString());
+        uint tracknumber(fileRef.tag()->track());
+
         QTableWidgetItem *filename = new QTableWidgetItem(fileInfo.fileName());
         m_ui->fileTable->setItem(i, 0, filename);
-        m_ui->fileTable->setItem(i, 1, new QTableWidgetItem("-"));
-        m_ui->fileTable->setItem(i, 2, new QTableWidgetItem("-"));
-        m_ui->fileTable->setItem(i, 3, new QTableWidgetItem("-"));
+        m_ui->fileTable->setItem(i, 1, new QTableWidgetItem(artist));
+        m_ui->fileTable->setItem(i, 2, new QTableWidgetItem(title));
+        m_ui->fileTable->setItem(i, 3, new QTableWidgetItem(QString::number(tracknumber)));
     }
 }
 
