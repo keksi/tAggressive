@@ -84,7 +84,7 @@ void Taggressive::initializeFileTable()
 //-----------------------------------------------------------------------------
 void Taggressive::fillFileTable(const QString &dirpath)
 {
-    m_currentDirList.clear();
+    m_selectedDirMap.clear();
     QDir albumDir(dirpath);
     QFileInfoList tracklist = albumDir.entryInfoList(QStringList() << "*.mp3");
     m_ui->fileTable->setRowCount(tracklist.size());
@@ -93,7 +93,7 @@ void Taggressive::fillFileTable(const QString &dirpath)
     {
         QFileInfo fileInfo = tracklist.at(i);
         TagLib::FileRef fileRef(qPrintable(fileInfo.filePath()));
-        m_currentDirList.insert(fileInfo.fileName(), fileRef);
+        m_selectedDirMap.insert(fileInfo.fileName(), fileRef);
 
         m_ui->fileTable->setItem(
             i, 0, new QTableWidgetItem(fileInfo.fileName()));
