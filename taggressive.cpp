@@ -7,10 +7,8 @@
 // taggressive/
 #include "taggressive.h"
 #include "ui_taggressive.h"
-// taglib
-#include "taglib.h"
+// taglib/
 #include "tag.h"
-#include "fileref.h"
 
 Taggressive::Taggressive(QWidget *parent)
     : QMainWindow(parent)
@@ -68,9 +66,10 @@ void Taggressive::initializeFileTable()
 {
     m_ui->fileTable->setAlternatingRowColors(true);
     m_ui->fileTable->sortItems(0);
-    m_ui->fileTable->setColumnCount(4);
+    m_ui->fileTable->setColumnCount(9);
     m_ui->fileTable->setHorizontalHeaderLabels(
-        QStringList() << "filename" << "artist" << "tracktitle" << "tracknumber");
+        QStringList() << "File name" << "Artist" << "Album" << "Title" << "Year"
+                      << "Genre" << "Track #" << "Bitrate" << "Time");
 }
 
 void Taggressive::fillFileTable(const QString &dirpath)
@@ -83,15 +82,28 @@ void Taggressive::fillFileTable(const QString &dirpath)
     {
         QFileInfo fileInfo = tracklist.at(i);
         TagLib::FileRef fileRef(qPrintable(fileInfo.filePath()));
-        QString artist(fileRef.tag()->artist().toCString());
-        QString title(fileRef.tag()->title().toCString());
-        uint tracknumber(fileRef.tag()->track());
+        m_currentDirList.insert(fileInfo.fileName(), fileRef);
 
-        QTableWidgetItem *filename = new QTableWidgetItem(fileInfo.fileName());
-        m_ui->fileTable->setItem(i, 0, filename);
-        m_ui->fileTable->setItem(i, 1, new QTableWidgetItem(artist));
-        m_ui->fileTable->setItem(i, 2, new QTableWidgetItem(title));
-        m_ui->fileTable->setItem(i, 3, new QTableWidgetItem(QString::number(tracknumber)));
+        m_ui->fileTable->setItem(
+            i, 0, new QTableWidgetItem(fileInfo.fileName()));
+        m_ui->fileTable->setItem(
+            i, 1, new QTableWidgetItem(fileRef.tag()->artist().toCString()));
+        m_ui->fileTable->setItem(
+            i, 2, new QTableWidgetItem(fileRef.tag()->album().toCString()));
+        m_ui->fileTable->setItem(
+            i, 3, new QTableWidgetItem(fileRef.tag()->title().toCString()));
+        m_ui->fileTable->setItem(
+            i, 4, new QTableWidgetItem(QString::number(fileRef.tag()->year())));
+        m_ui->fileTable->setItem(
+            i, 5, new QTableWidgetItem(fileRef.tag()->genre().toCString()));
+        m_ui->fileTable->setItem(
+            i, 6, new QTableWidgetItem(QString::number(fileRef.tag()->track())));
+        m_ui->fileTable->setItem(
+            i, 7, new QTableWidgetItem(QString::number(fileRef.audioProperties()->bitrate())));
+        m_ui->fileTable->setItem(
+            i, 8, new QTableWidgetItem(QString("%1:%2")
+                .arg(fileRef.audioProperties()->length()/60)
+                .arg(fileRef.audioProperties()->length()%60)));
     }
 }
 

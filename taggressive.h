@@ -1,7 +1,12 @@
 #pragma once
 
-#include <QtGui/QMainWindow>
+// Qt/
+#include <QtCore/QMap>
 #include <QtCore/QModelIndex>
+#include <QtGui/QMainWindow>
+// taglib/
+#include "taglib.h"
+#include "fileref.h"
 
 class QFileSystemModel;
 class QSortFilterProxyModel;
@@ -11,7 +16,7 @@ namespace Ui
     class Taggressive;
 }
 
-//using namespace TagLib;
+typedef QMap<QString, TagLib::FileRef> DirMap;
 
 class Taggressive : public QMainWindow
 {
@@ -30,6 +35,7 @@ private:
     Ui::Taggressive           *m_ui;
     QFileSystemModel          *m_fsModel;
     QSortFilterProxyModel     *m_fsProxyModel;
+    DirMap                    m_currentDirList;
 
     void                      fillFileTable(const QString &dirpath);
     void                      initializeFileTree();
