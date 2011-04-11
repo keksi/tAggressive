@@ -10,6 +10,10 @@
 // taglib/
 #include "tag.h"
 
+//--[ defines ]----------------------------------------------------------------
+#define START_DIRECTORY "/home/tomjoad/Musik/Alben/"
+
+//-----------------------------------------------------------------------------
 Taggressive::Taggressive(QWidget *parent)
     : QMainWindow(parent)
     , m_ui(new Ui::Taggressive)
@@ -23,22 +27,26 @@ Taggressive::Taggressive(QWidget *parent)
     initializeFileTable();
 }
 
+//-----------------------------------------------------------------------------
 Taggressive::~Taggressive()
 {
     delete m_ui;
     m_ui = 0;
 }
 
+//-----------------------------------------------------------------------------
 void Taggressive::on_actionClose_triggered()
 {
     exit(0);
 }
 
+//-----------------------------------------------------------------------------
 void Taggressive::on_actionEditTag_triggered()
 {
     // TODO: display edit tags dialog in here
 }
 
+//-----------------------------------------------------------------------------
 void Taggressive::initializeFileTree()
 {
     m_fsModel = new QFileSystemModel(this);
@@ -62,6 +70,7 @@ void Taggressive::initializeFileTree()
     m_ui->fileTree->setHeaderHidden(true);
 }
 
+//-----------------------------------------------------------------------------
 void Taggressive::initializeFileTable()
 {
     m_ui->fileTable->setAlternatingRowColors(true);
@@ -72,8 +81,10 @@ void Taggressive::initializeFileTable()
                       << "Genre" << "Track #" << "Bitrate" << "Time");
 }
 
+//-----------------------------------------------------------------------------
 void Taggressive::fillFileTable(const QString &dirpath)
 {
+    m_currentDirList.clear();
     QDir albumDir(dirpath);
     QFileInfoList tracklist = albumDir.entryInfoList(QStringList() << "*.mp3");
     m_ui->fileTable->setRowCount(tracklist.size());
@@ -107,6 +118,7 @@ void Taggressive::fillFileTable(const QString &dirpath)
     }
 }
 
+//-----------------------------------------------------------------------------
 void Taggressive::on_fileTree_clicked(QModelIndex index)
 {
     QString path = m_fsModel->filePath(m_fsProxyModel->mapToSource(index));
