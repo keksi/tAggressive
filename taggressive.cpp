@@ -35,15 +35,40 @@ Taggressive::~Taggressive()
 }
 
 //-----------------------------------------------------------------------------
-void Taggressive::on_actionClose_triggered()
+void Taggressive::fillFileTable(const QString &dirpath)
 {
-    exit(0);
-}
+    m_selectedDirMap.clear();
+    QDir albumDir(dirpath);
+    QFileInfoList tracklist = albumDir.entryInfoList(QStringList() << "*.mp3");
+    m_ui->fileTable->setRowCount(tracklist.size());
 
-//-----------------------------------------------------------------------------
-void Taggressive::on_actionEditTag_triggered()
-{
-    // TODO: display edit tags dialog in here
+    for (int i=0; i < tracklist.size(); ++i)
+    {
+        QFileInfo fileInfo = tracklist.at(i);
+        TagLib::FileRef fileRef(qPrintable(fileInfo.filePath()));
+        m_selectedDirMap.insert(fileInfo.fileName(), fileRef);
+
+        m_ui->fileTable->setItem(
+            i, 0, new QTableWidgetItem(fileInfo.fileName()));
+        m_ui->fileTable->setItem(
+            i, 1, new QTableWidgetItem(fileRef.tag()->artist().toCString()));
+        m_ui->fileTable->setItem(
+            i, 2, new QTableWidgetItem(fileRef.tag()->album().toCString()));
+        m_ui->fileTable->setItem(
+            i, 3, new QTableWidgetItem(fileRef.tag()->title().toCString()));
+        m_ui->fileTable->setItem(
+            i, 4, new QTableWidgetItem(QString::number(fileRef.tag()->year())));
+        m_ui->fileTable->setItem(
+            i, 5, new QTableWidgetItem(fileRef.tag()->genre().toCString()));
+        m_ui->fileTable->setItem(
+            i, 6, new QTableWidgetItem(QString::number(fileRef.tag()->track())));
+        m_ui->fileTable->setItem(
+            i, 7, new QTableWidgetItem(QString::number(fileRef.audioProperties()->bitrate())));
+        m_ui->fileTable->setItem(
+            i, 8, new QTableWidgetItem(QString("%1:%2")
+                .arg(fileRef.audioProperties()->length()/60)
+                .arg(fileRef.audioProperties()->length()%60)));
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -82,40 +107,15 @@ void Taggressive::initializeFileTable()
 }
 
 //-----------------------------------------------------------------------------
-void Taggressive::fillFileTable(const QString &dirpath)
+void Taggressive::on_actionClose_triggered()
 {
-    m_selectedDirMap.clear();
-    QDir albumDir(dirpath);
-    QFileInfoList tracklist = albumDir.entryInfoList(QStringList() << "*.mp3");
-    m_ui->fileTable->setRowCount(tracklist.size());
+    exit(0);
+}
 
-    for (int i=0; i < tracklist.size(); ++i)
-    {
-        QFileInfo fileInfo = tracklist.at(i);
-        TagLib::FileRef fileRef(qPrintable(fileInfo.filePath()));
-        m_selectedDirMap.insert(fileInfo.fileName(), fileRef);
-
-        m_ui->fileTable->setItem(
-            i, 0, new QTableWidgetItem(fileInfo.fileName()));
-        m_ui->fileTable->setItem(
-            i, 1, new QTableWidgetItem(fileRef.tag()->artist().toCString()));
-        m_ui->fileTable->setItem(
-            i, 2, new QTableWidgetItem(fileRef.tag()->album().toCString()));
-        m_ui->fileTable->setItem(
-            i, 3, new QTableWidgetItem(fileRef.tag()->title().toCString()));
-        m_ui->fileTable->setItem(
-            i, 4, new QTableWidgetItem(QString::number(fileRef.tag()->year())));
-        m_ui->fileTable->setItem(
-            i, 5, new QTableWidgetItem(fileRef.tag()->genre().toCString()));
-        m_ui->fileTable->setItem(
-            i, 6, new QTableWidgetItem(QString::number(fileRef.tag()->track())));
-        m_ui->fileTable->setItem(
-            i, 7, new QTableWidgetItem(QString::number(fileRef.audioProperties()->bitrate())));
-        m_ui->fileTable->setItem(
-            i, 8, new QTableWidgetItem(QString("%1:%2")
-                .arg(fileRef.audioProperties()->length()/60)
-                .arg(fileRef.audioProperties()->length()%60)));
-    }
+//-----------------------------------------------------------------------------
+void Taggressive::on_actionEditTag_triggered()
+{
+    // TODO: display edit tags dialog in here
 }
 
 //-----------------------------------------------------------------------------

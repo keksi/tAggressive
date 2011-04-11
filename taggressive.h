@@ -12,7 +12,7 @@
 class QFileSystemModel;
 class QSortFilterProxyModel;
 
-//--[ namespaces and typedefy ]------------------------------------------------
+//--[ namespaces and typedefs ]------------------------------------------------
 typedef QMap<QString, TagLib::FileRef> DirMap;
 
 namespace Ui
@@ -29,11 +29,6 @@ public:
     explicit                  Taggressive(QWidget* parent = 0);
     virtual                   ~Taggressive();
 
-private slots:
-    void                      on_actionClose_triggered();
-    void                      on_actionEditTag_triggered();
-    void                      on_fileTree_clicked(QModelIndex index);
-
 private:
     Ui::Taggressive           *m_ui;
     QFileSystemModel          *m_fsModel;
@@ -43,4 +38,9 @@ private:
     void                      fillFileTable(const QString &dirpath);
     void                      initializeFileTree();
     void                      initializeFileTable();
+
+private slots:
+    void                      on_actionClose_triggered();
+    void                      on_actionEditTag_triggered();
+    void                      on_fileTree_clicked(QModelIndex index);
 };
